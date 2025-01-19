@@ -16,6 +16,21 @@ int main()
 	Player.setSize(sf::Vector2f(player_size_x, player_size_y));
 	Player.setFillColor(sf::Color::Red);
 	
+
+	//Enemy object create
+	const int enemy_num = 6;
+	sf::CircleShape Enemy[enemy_num];
+
+	//set enemy size and color
+	float enemy_size = 15.0f;
+	for (int i = 0; i < enemy_num;i++) 
+	{
+		float rand_y = rand() % windowheigh;
+		Enemy[i].setRadius(enemy_size);
+		Enemy[i].setFillColor(sf::Color::White);
+		Enemy[i].sf::Transformable::setPosition(1720, rand_y);
+	}
+
 	while (window.isOpen())
 	{
 		sf::Event event;
@@ -27,7 +42,11 @@ int main()
 
 		window.clear(); 
 		window.draw(Player);
-		
+
+		for (int i = 0;i < enemy_num;i++)
+		{
+			window.draw(Enemy[i]);
+		}
 		//move logic
 		const float distance = 0.1f;
 		float speed = 5.0f;
