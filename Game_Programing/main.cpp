@@ -1,5 +1,43 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+
+void Player_Move(sf::Vector2f& current_position)
+{
+	const float speed = 0.5f;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	{
+		current_position.x -= speed;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		current_position.x += speed;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	{
+		current_position.y += speed;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	{
+		current_position.y -= speed;
+	}
+}
+void Enemy_Move(sf::Vector2f player_pos, sf::Vector2f* enemy_pos, int enemy_num, float speed)
+{
+	for (int j = 0; j < enemy_num; j++)
+	{
+		float enemyToPlayerX = player_pos.x - enemy_pos[j].x;
+		float enemyToPlayerY = player_pos.y - enemy_pos[j].y;
+
+		float length = sqrt(enemyToPlayerX * enemyToPlayerX + enemyToPlayerY * enemyToPlayerY);
+		
+		enemyToPlayerX /= length;
+		enemyToPlayerY /= length;
+
+		enemy_pos[j].x += enemyToPlayerX * speed;
+		enemy_pos[j].y += enemyToPlayerY * speed;
+	}
+	
+}
 int main()
 {
 	//window create
@@ -17,18 +55,25 @@ int main()
 	Player.setFillColor(sf::Color::Red);
 
 
-	//Enemy object create
-	const int enemy_num = 6;
+	//Enemy object create and set speed
+	const int enemy_num = 10;
 	sf::CircleShape Enemy[enemy_num];
+	const float enemy_speed = 0.3f;
 
-	//set enemy size and color
+	//set enemy size and color and start position
 	float enemy_size = 15.0f;
+	sf::Vector2f* enemy_pos = new sf::Vector2f[ enemy_num ]; //heap 
+
 	for (int i = 0; i < enemy_num;i++) 
 	{
-		float rand_y = rand() % windowheigh;
-		Enemy[i].setRadius(enemy_size);
-		Enemy[i].setFillColor(sf::Color::White);
-		Enemy[i].sf::Transformable::setPosition(1720, rand_y);
+		
+		enemy_pos[i].x = windowwidth - 100;
+		enemy_pos[i].y = rand() % windowheigh;
+
+		Enemy[i] = sf::CircleShape{ enemy_size };
+		Enemy[i].setFillColor(sf::Color::Magenta);
+		Enemy[i].setOutlineColor(sf::Color::Blue);
+		Enemy[i].setOutlineThickness(1.0f);
 	}
 
 
@@ -42,42 +87,27 @@ int main()
 				window.close();
 		}
 
-		window.clear(); 
-		window.draw(Player);
+		//Player move logic
+		sf::Vector2f player_position = Player.sf::Transformable::getPosition();
+		Player_Move(player_position);
+		Player.sf::Transformable::setPosition(player_position);
 
+		//enemy following player 
+		Enemy_Move(player_position, enemy_pos, enemy_num, enemy_speed);
+		for (int i = 0; i < enemy_num; i++)
+		{
+			Enemy[i].sf::Transformable::setPosition(enemy_pos[i]);
+		}
+		
+		//fps
+		window.clear();
 		for (int i = 0;i < enemy_num;i++)
 		{
 			window.draw(Enemy[i]);
 		}
-		// enemy following player 
-		for (int i = 0; i < enemy_num; i++)
-		{
-			float enemy_speed = 0.001f;
-			sf::Vector2f player_position = Player.sf::Transformable::getPosition();
-			sf::Vector2f enemy_position = Enemy[i].sf::Transformable::getPosition();
-			Enemy[i].sf::Transformable::move((player_position - enemy_position) * enemy_speed);
-		}
-		//move logic
-		const float distance = 0.1f;
-		float speed = 4.0f;
-		
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		{
-			Player.sf::Transformable::move(-distance*speed,0.0f);
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		{
-			Player.sf::Transformable::move(distance*speed,0.0f);
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		{
-			Player.sf::Transformable::move(0.0f,distance* speed);
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		{
-			Player.sf::Transformable::move(0.0f,-distance* speed);
-		}	
+		window.draw(Player);
 		window.display();
 	}
+	
+	delete[] enemy_pos;
 }
