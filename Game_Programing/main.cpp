@@ -11,11 +11,11 @@ int main()
 	sf::RectangleShape Player;
 
 	//set player size and color
-	const float player_size_x = 30;
-	const float player_size_y = 30;
+	const float player_size_x = 20;
+	const float player_size_y = 20;
 	Player.setSize(sf::Vector2f(player_size_x, player_size_y));
 	Player.setFillColor(sf::Color::Red);
-	
+
 
 	//Enemy object create
 	const int enemy_num = 6;
@@ -31,8 +31,10 @@ int main()
 		Enemy[i].sf::Transformable::setPosition(1720, rand_y);
 	}
 
+
 	while (window.isOpen())
 	{
+
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -47,9 +49,19 @@ int main()
 		{
 			window.draw(Enemy[i]);
 		}
+		// enemy following player 
+		for (int i = 0; i < enemy_num; i++)
+		{
+			float enemy_speed = 0.001f;
+			sf::Vector2f player_position = Player.sf::Transformable::getPosition();
+			sf::Vector2f enemy_position = Enemy[i].sf::Transformable::getPosition();
+			Enemy[i].sf::Transformable::move((player_position - enemy_position) * enemy_speed);
+		}
 		//move logic
 		const float distance = 0.1f;
-		float speed = 5.0f;
+		float speed = 4.0f;
+		
+
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 		{
 			Player.sf::Transformable::move(-distance*speed,0.0f);
@@ -65,7 +77,7 @@ int main()
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 		{
 			Player.sf::Transformable::move(0.0f,-distance* speed);
-		}
+		}	
 		window.display();
 	}
 }
