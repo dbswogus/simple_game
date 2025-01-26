@@ -3,7 +3,7 @@
 
 void Player_Move(sf::Vector2f& current_position)
 {
-	const float speed = 0.5f;
+	const float speed = 1.25f;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
 		current_position.x -= speed;
@@ -21,7 +21,7 @@ void Player_Move(sf::Vector2f& current_position)
 		current_position.y -= speed;
 	}
 }
-void Enemy_Move(sf::Vector2f player_pos, sf::Vector2f* enemy_pos, int enemy_num, float speed)
+void Enemy_Move(sf::Vector2f player_pos, sf::Vector2f* enemy_pos, int enemy_num, float* speed)
 {
 	for (int j = 0; j < enemy_num; j++)
 	{
@@ -33,8 +33,8 @@ void Enemy_Move(sf::Vector2f player_pos, sf::Vector2f* enemy_pos, int enemy_num,
 		enemyToPlayerX /= length;
 		enemyToPlayerY /= length;
 
-		enemy_pos[j].x += enemyToPlayerX * speed;
-		enemy_pos[j].y += enemyToPlayerY * speed;
+		enemy_pos[j].x += enemyToPlayerX * speed[j];
+		enemy_pos[j].y += enemyToPlayerY * speed[j];
 	}
 	
 }
@@ -57,9 +57,17 @@ int main()
 
 	//Enemy object create and set speed
 	const int enemy_num = 10;
-	sf::CircleShape Enemy[enemy_num];
-	const float enemy_speed = 0.3f;
-
+	sf::CircleShape* Enemy= new sf::CircleShape[enemy_num];
+	float enemy_speed[enemy_num];
+	for (int i = 0;i < enemy_num;i++)
+	{
+		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		if (r < 0.3f)
+		{
+			r = 0.3f;
+		}
+		enemy_speed[i] = r;
+	}
 	//set enemy size and color and start position
 	float enemy_size = 15.0f;
 	sf::Vector2f* enemy_pos = new sf::Vector2f[ enemy_num ]; //heap 
@@ -110,4 +118,5 @@ int main()
 	}
 	
 	delete[] enemy_pos;
+	delete[] Enemy;
 }
