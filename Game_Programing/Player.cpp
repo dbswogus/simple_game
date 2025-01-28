@@ -8,9 +8,9 @@ Player::Player(sf::Vector2f pos, sf::Vector2f size, sf::Color color, float speed
 	shape.setSize(size);
 	shape.setFillColor(color);
 }
-void Player::Update() // 플레이어 동작
+void Player::Update(float dt) // 플레이어 동작
 {
-	ProcessInput();
+	ProcessInput(dt);
 	shape.setPosition(position);
 }
 void Player::Draw(sf::RenderWindow& window)
@@ -21,22 +21,22 @@ sf::Vector2f Player::GetPosition()
 {
 	return position;
 }
-void Player::ProcessInput()
+void Player::ProcessInput(float dt)
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
-		position.x -= speed;
+		position.x -= speed*dt;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
-		position.x += speed;
+		position.x += speed*dt;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 	{
-		position.y += speed;
+		position.y += speed*dt;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
-		position.y -= speed;
+		position.y -= speed*dt;
 	}
 }

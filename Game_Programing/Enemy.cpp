@@ -14,7 +14,7 @@ Enemy::Enemy(float size, float speed,  sf::Color enemyColor,sf::Vector2f enemyPo
 Enemy::Enemy()
 {
 }
-void Enemy::MoveToPlayer()
+void Enemy::MoveToPlayer(float dt)
 {
 	float enemyToPlayerX = player->GetPosition().x - enemyPosition.x;
 	float enemyToPlayerY = player->GetPosition().y - enemyPosition.y;
@@ -24,16 +24,16 @@ void Enemy::MoveToPlayer()
 	enemyToPlayerX /= length;
 	enemyToPlayerY /= length;
 
-	enemyPosition.x += enemyToPlayerX * enemySpeed;
-	enemyPosition.y += enemyToPlayerY * enemySpeed;
+	enemyPosition.x += enemyToPlayerX * enemySpeed * dt;
+	enemyPosition.y += enemyToPlayerY * enemySpeed * dt;
 }
 
 void Enemy::Draw(sf::RenderWindow& window)
 {
 	window.draw(enemyShape);
 }
-void Enemy::Update()
+void Enemy::Update(float dt)
 {
-	MoveToPlayer();
+	MoveToPlayer(dt);
 	enemyShape.sf::Transformable::setPosition(enemyPosition);
 }
